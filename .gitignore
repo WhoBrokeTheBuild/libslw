@@ -1,0 +1,8 @@
+# clangd
+.cache
+
+# Visual Studio Code
+.vscode
+
+# CMake
+[Bb]uild/
