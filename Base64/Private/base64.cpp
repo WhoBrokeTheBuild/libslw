@@ -22,13 +22,13 @@ constexpr uint8_t _DECODE_MAP[] = {
     0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // p-z
 };
 
-std::vector<uint8_t> base64::decode(std::string_view code)
+list<uint8_t> base64::decode(string_view code)
 {
     assert((code.size() % 4) == 0);
 
     size_t result_size = (code.size() * 0.75);
 
-    std::vector<uint8_t> result;
+    list<uint8_t> result;
     result.reserve(result_size);
 
     size_t index;
@@ -59,11 +59,11 @@ std::vector<uint8_t> base64::decode(std::string_view code)
     return result;
 }
 
-std::string base64::encode(std::span<const uint8_t> data)
+string base64::encode(view<const uint8_t> data)
 {
     size_t result_size = std::ceil((data.size() * 0.75) / 4.0) * 4;
 
-    std::string result;
+    string result;
     result.reserve(result_size);
 
     size_t index;
