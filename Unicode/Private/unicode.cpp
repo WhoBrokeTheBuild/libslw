@@ -1,11 +1,10 @@
-#include <cstddef>
-#include <slw/UTF8.hpp>
+#include <slw/unicode.hpp>
 #include <cstdio>
 
 namespace slw {
     // const char32_t MISSING = U'�';
 
-size_t UTF8::Length(std::u8string_view string)
+size_t unicode::length(u8string_view string)
 {
     size_t length = 0;
     for (size_t i = 0; i < string.size(); ) {
@@ -23,7 +22,7 @@ size_t UTF8::Length(std::u8string_view string)
             i += 4;
         }
         else {
-            throw InvalidSequence();
+            throw invalid_sequence();
         }
         
         ++length;

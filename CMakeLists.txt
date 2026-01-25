@@ -26,5 +26,5 @@ endif()
 include(SetupLibrary)
 
 add_subdirectory(Containers)
-add_subdirectory(UTF8)
+add_subdirectory(Unicode)
 add_subdirectory(Base64)
