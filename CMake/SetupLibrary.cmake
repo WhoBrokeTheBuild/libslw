@@ -3,25 +3,39 @@ macro(setup_library _target)
 
     file(GLOB_RECURSE
         _public_list
+        "Public/**/*.h"
         "Public/**/*.hpp"
     )
 
     file(GLOB_RECURSE
         _private_list
+        "Private/*.h"
+        "Private/*.c"
+        "Private/*.hpp"
         "Private/*.cpp"
     )
 
-    add_library(
-        ${_target}
-        ${_public_list}
-        ${_private_list}
-    )
+    if (NOT _private_list)
+        add_library(${_target} INTERFACE)
 
-    target_include_directories(
-        ${_target}
-        PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/Public
-    )
+        target_include_directories(
+            ${_target}
+            INTERFACE
+                ${CMAKE_CURRENT_SOURCE_DIR}/Public
+        )
+    else()
+        add_library(
+            ${_target}
+            ${_public_list}
+            ${_private_list}
+        )
+
+        target_include_directories(
+            ${_target}
+            PUBLIC
+                ${CMAKE_CURRENT_SOURCE_DIR}/Public
+        )
+    endif()
 
     file(GLOB
         _test_source_list
@@ -46,6 +60,7 @@ macro(setup_library _target)
         add_test(
             NAME ${_test_name}
             COMMAND ${_test_name}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Tests
         )
     endforeach()
 

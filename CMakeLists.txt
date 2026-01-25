@@ -4,7 +4,7 @@ list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 project(SLW)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
@@ -21,6 +21,11 @@ if(BUILD_TESTING)
 
     FetchContent_MakeAvailable(googletest)
     
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Disable "#embed is a clang extension" warnings
+    add_compile_options(-Wno-c23-extensions)
 endif()
 
 include(SetupLibrary)
