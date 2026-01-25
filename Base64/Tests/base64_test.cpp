@@ -1,11 +1,11 @@
 
-#include <gtest/gtest.h>
+#include <slw/base64.hpp>
 
-#include <slw/Base64.hpp>
+#include <gtest/gtest.h>
 
 using namespace slw;
 
-TEST(Base64, Lipsum)
+TEST(Base64Test, Lipsum)
 {
     const char * DATA = 
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris porta "
@@ -20,27 +20,27 @@ TEST(Base64, Lipsum)
         "ZGlldCBhYy4gQ3VyYWJpdHVyIHNvZGFsZXMgbGVvIHV0IGRpYW0gcmhvbmN1cywgaWQgbWF0dGlz"
         "IHNhcGllbiBjb25zZWN0ZXR1ci4=";
 
-    const auto& code = Base64::EncodeString(DATA);
+    const auto& code = base64::encode_string(DATA);
 
     ASSERT_EQ(code, CODE);
 
-    const auto& lipsum = Base64::DecodeString(CODE);
+    const auto& lipsum = base64::decode_string(CODE);
 
     ASSERT_EQ(lipsum, DATA);
 }
 
-TEST(Base64, Zeros)
+TEST(Base64Test, Zeros)
 {
     const uint8_t DATA[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     const char * CODE = "AAAAAAAAAAAAAA==";
 
-    const auto& result = Base64::Encode(DATA);
+    const auto& result = base64::encode(DATA);
 
     ASSERT_EQ(result, CODE);
 }
 
-TEST(Base64, AllValues)
+TEST(Base64Test, AllValues)
 {
     const char * CODE = 
         "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4"
@@ -49,21 +49,21 @@ TEST(Base64, AllValues)
         "q6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj"
         "5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==";
 
-    std::vector<uint8_t> data; // { 0 .. 256 }
+    std::vector<uint8_t> data; // { 0 .. 255 }
     for (int i = 0; i <= UINT8_MAX; ++i) {
         data.push_back(i);
     }
 
-    auto code = Base64::Encode(data);
+    auto code = base64::encode(data);
 
-    const auto& result = Base64::Decode(code);
+    const auto& result = base64::decode(code);
 
     ASSERT_EQ(data.size(), result.size());
     
     ASSERT_TRUE(std::equal(data.begin(), data.end(), result.begin()));
 }
 
-TEST(Base64, Random)
+TEST(Base64Test, Random)
 {
     srand(time(0));
 
@@ -74,9 +74,9 @@ TEST(Base64, Random)
         data.push_back(rand() % 256);
     }
 
-    auto code = Base64::Encode(data);
+    auto code = base64::encode(data);
 
-    const auto& result = Base64::Decode(code);
+    const auto& result = base64::decode(code);
 
     ASSERT_EQ(data.size(), result.size());
     

@@ -1,4 +1,4 @@
-#include <slw/Base64.hpp>
+#include <slw/base64.hpp>
 
 #include <cmath>
 #include <cassert>
@@ -22,7 +22,7 @@ constexpr uint8_t _DECODE_MAP[] = {
     0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // p-z
 };
 
-std::vector<uint8_t> Base64::Decode(std::string_view code)
+std::vector<uint8_t> base64::decode(std::string_view code)
 {
     assert((code.size() % 4) == 0);
 
@@ -59,7 +59,7 @@ std::vector<uint8_t> Base64::Decode(std::string_view code)
     return result;
 }
 
-std::string Base64::Encode(std::span<const uint8_t> data)
+std::string base64::encode(std::span<const uint8_t> data)
 {
     size_t result_size = std::ceil((data.size() * 0.75) / 4.0) * 4;
 

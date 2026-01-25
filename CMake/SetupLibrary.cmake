@@ -25,7 +25,7 @@ macro(setup_library _target)
 
     file(GLOB
         _test_source_list
-        "Tests/*Test.cpp"
+        "Tests/*.cpp"
     )
 
     foreach(_test_source IN LISTS _test_source_list)
