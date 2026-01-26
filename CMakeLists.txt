@@ -30,6 +30,5 @@ endif()
 
 include(SetupLibrary)
 
-add_subdirectory(Containers)
-add_subdirectory(Unicode)
+add_subdirectory(Core)
 add_subdirectory(Base64)
