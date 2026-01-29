@@ -28,8 +28,55 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     add_compile_options(-Wno-c23-extensions)
 endif()
 
-include(SetupLibrary)
+file(GLOB_RECURSE
+    _public_list
+    "Public/**/*.h"
+    "Public/**/*.hpp"
+)
 
-add_subdirectory(Core)
-add_subdirectory(IO)
-add_subdirectory(Base64)
+file(GLOB_RECURSE
+    _private_list
+    "Private/*.h"
+    "Private/*.c"
+    "Private/*.hpp"
+    "Private/*.cpp"
+)
+
+add_library(
+    SLW
+    ${_public_list}
+    ${_private_list}
+)
+
+target_include_directories(
+    SLW
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/Public
+)
+
+file(GLOB
+    _test_source_list
+    "Tests/*.cpp"
+)
+
+foreach(_test_source IN LISTS _test_source_list)
+    cmake_path(GET _test_source STEM _test_name)
+
+    add_executable(
+        ${_test_name}
+        ${_test_source}
+    )
+
+    target_link_libraries(
+        ${_test_name}
+        PRIVATE
+            SLW
+            GTest::gtest
+    )
+    
+    add_test(
+        NAME ${_test_name}
+        COMMAND ${_test_name}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Tests
+    )
+endforeach()
