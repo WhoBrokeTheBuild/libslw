@@ -4,8 +4,16 @@ list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 project(SLW)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Disable "#embed is a clang extension" warnings
+    add_compile_options(-Wno-c23-extensions)
+
+    # Use the LLVM C++ standard library
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
 
 include(FetchContent)
 
@@ -21,11 +29,6 @@ if(BUILD_TESTING)
 
     FetchContent_MakeAvailable(googletest)
     
-endif()
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    # Disable "#embed is a clang extension" warnings
-    add_compile_options(-Wno-c23-extensions)
 endif()
 
 file(GLOB_RECURSE
@@ -60,6 +63,7 @@ file(GLOB
 )
 
 foreach(_test_source IN LISTS _test_source_list)
+
     cmake_path(GET _test_source STEM _test_name)
 
     add_executable(
@@ -79,4 +83,7 @@ foreach(_test_source IN LISTS _test_source_list)
         COMMAND ${_test_name}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Tests
     )
+
 endforeach()
+
+

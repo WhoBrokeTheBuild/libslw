@@ -13,6 +13,8 @@ using std::runtime_error;
 
 using std::system_error;
 
+using std::make_error_code;
+
 inline std::system_error last_system_error() {
     return std::system_error(errno, std::generic_category());
 }

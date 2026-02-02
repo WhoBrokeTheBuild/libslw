@@ -1,11 +1,8 @@
 #ifndef SLW_BASE64_HPP
 #define SLW_BASE64_HPP
 
-#include <slw/strings.hpp>
-#include <slw/list.hpp>
-#include <slw/view.hpp>
-
-#include <cstdint>
+#include <slw/integers.hpp>
+#include <slw/containers.hpp>
 
 namespace slw {
 

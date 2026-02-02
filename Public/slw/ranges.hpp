@@ -2,6 +2,7 @@
 #define SLW_RANGES_HPP
 
 #include <ranges>
+#include <algorithm>
 
 namespace slw {
 

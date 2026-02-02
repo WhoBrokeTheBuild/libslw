@@ -1,5 +1,5 @@
 
-#include <slw/file.hpp>
+#include <slw/io/file.hpp>
 
 #include <gtest/gtest.h>
 
@@ -13,13 +13,28 @@ const uint8_t IMAGE_BMP[] = {
 #embed "image.bmp"
 };
 
+TEST(PathTest, Stats)
+{
+    const auto& root = directory::space("/");
+    std::println("status for /");
+    std::println("  available: {}", format_human_readable(root.available));
+    std::println("  capacity: {}", format_human_readable(root.capacity));
+    std::println("  free: {}", format_human_readable(root.free));
+
+    const auto& run = directory::space("/run/");
+    std::println("status for /run");
+    std::println("  available: {}", format_human_readable(run.available));
+    std::println("  capacity: {}", format_human_readable(run.capacity));
+    std::println("  free: {}", format_human_readable(run.free));
+}
+
 class ReadTest : public testing::Test
 {
 protected:
 
     void SetUp() override {
         // SetWorkingDirectory(path(__FILE__).parent_path());
-        set_working_directory(path(__FILE__).parent_path());
+        directory::current(path(__FILE__).parent_path());
     }
 };
 
@@ -58,7 +73,7 @@ TEST_F(ReadTest, Binary)
     ASSERT_TRUE(ranges::equal(magic, list<uint8_t>{ 0x42, 0x4D }));
 
     uint16_t size = image.read_one<uint16_t>();
-    ASSERT_EQ(size, image.get_size());
+    ASSERT_EQ(size, image.size());
 
     image.seek(14, seekdir::begin);
 
@@ -88,24 +103,22 @@ class WriteTest : public testing::Test
 {
 protected:
 
-    path _temp_dir;
-    path _temp_file;
+    path _tempdir;
 
     void SetUp() override {
-        _temp_dir = make_temporary_directory("/tmp/libslw-");
+        _tempdir = directory::create_temporary("libslw-");
     }
 
     void TearDown() override {
-        remove_file(_temp_file);
-        remove_directory(_temp_dir);
+        directory::remove_all(_tempdir);
     }
 };
 
 TEST_F(WriteTest, Text)
 {
-    _temp_file = _temp_dir / "output.txt";
+    path filename = _tempdir / "output.txt";
 
-    file file(_temp_file, "wt");
+    file file(filename, "wt");
     file.print("Test 123\n");
     file.println("{} {}", "Test", 123);
 
@@ -117,25 +130,25 @@ TEST_F(WriteTest, Text)
 
     file.close();
 
-    file.open(_temp_file, "rt");
+    file.open(filename, "rt");
     const auto& lines = file.read_lines();
     for (const auto& line : lines) {
         EXPECT_EQ(string_views::trim_right(line), "Test 123");
     }
     file.close();
 
-    file.open(_temp_file, "wt");
+    file.open(filename, "wt");
     for (const auto& line : lines) {
         file.write_line(string_views::trim_right(line));
     }
     file.close();
 
-    file.open(_temp_file, "rt");
+    file.open(filename, "rt");
     const auto& lines2 = file.read_lines();
     ASSERT_TRUE(ranges::equal(lines, lines2));
     file.close();
 
-    file.open(_temp_file, "wt");
+    file.open(filename, "wt");
     file.write_lines({
         "Test 123", "Test 123", "Test 123",
     });
@@ -143,9 +156,9 @@ TEST_F(WriteTest, Text)
 
 TEST_F(WriteTest, Binary)
 {
-    _temp_file = _temp_dir / "output.bin";
+    path filename = _tempdir / "output.bin";
 
-    file output(_temp_file, "wb");
+    file output(filename, "wb");
 
     output.write_one(42);
 

@@ -1,14 +1,16 @@
 #ifndef SLW_FILE_HPP
 #define SLW_FILE_HPP
 
-#include <slw/path.hpp>
-#include <slw/strings.hpp>
 #include <slw/ranges.hpp>
-#include <slw/list.hpp>
-#include <slw/initializer_list.hpp>
+#include <slw/strings.hpp>
+#include <slw/containers.hpp>
+
+#include <slw/io/paths.hpp>
+#include <slw/io/directory.hpp>
 
 #include <cstdio>
 #include <print>
+#include <type_traits>
 
 namespace slw {
 
@@ -28,13 +30,49 @@ class file
 {
 public:
 
+    static inline file create_temporary(std::string_view prefix = "", const char * mode = "wb", const path& directory = directory::temp()) {
+        slw::path file_template = directory / std::format("{}{}", prefix, "XXXXXX");
+        const char * result = ::mktemp(const_cast<char *>(file_template.c_str()));
+        if (!result) {
+            throw last_system_error();
+        }
+        
+        return file(file_template, mode);
+    }
+
+    static inline bool copy(const path& src, const path& dst) {
+        return std::filesystem::copy_file(src, dst);
+    }
+
+    static inline bool exists(const path& path) {
+        return std::filesystem::exists(path) && std::filesystem::is_regular_file(path);
+    }
+
+    static inline bool empty(const path& path) {
+        return std::filesystem::is_empty(path);
+    }
+
+    static inline void rename(const path& src, const path& dst) {
+        std::filesystem::rename(src, dst);
+    }
+
+    static inline bool remove(const path& path) {
+        return std::filesystem::remove(path);
+    }
+
+    static inline size_t size(const path& path) {
+        return std::filesystem::file_size(path);
+    }
+
     file() = default;
 
-    file(FILE * fp)
+    file(FILE * fp, const path& path = {})
         : _file(fp)
+        , _path(path)
     { }
 
-    file(const path& path, const char * mode = "rb") {
+    file(const path& path, const char * mode = "rb")
+    {
         open(path, mode);
     }
 
@@ -50,9 +88,9 @@ public:
         }
     }
 
-    void reopen(const path& path, const char * mode = "rb")
+    void reopen(const char * mode = "rb")
     {
-        _file = std::freopen(path.c_str(), mode, _file);
+        _file = std::freopen(_path.c_str(), mode, _file);
         if (_file == nullptr) {
             throw last_system_error();
         }
@@ -74,20 +112,24 @@ public:
         return _file;
     }
 
-    inline bool is_open() const {
+    inline path path() const {
+        return _path;
+    }
+
+    inline bool open() const {
         return (_file != nullptr);
     }
 
-    inline bool is_eof() const {
+    inline bool eof() const {
         return std::feof(_file);
     }
 
-    inline bool has_error() const {
+    inline bool error() const {
         return std::ferror(_file);
     }
 
     inline operator bool() const {
-        return (is_open() && ! has_error() && ! is_eof());
+        return (open() && ! error() && ! eof());
     }
 
     inline auto tell() {
@@ -104,7 +146,7 @@ public:
         return seek(0, seekdir::begin);
     }
 
-    size_t get_size()
+    size_t size()
     {
         size_t start = std::ftell(_file);
         std::fseek(_file, 0, SEEK_END);
@@ -113,8 +155,8 @@ public:
         return size;
     }
 
-    size_t get_remaining_size() {
-        return get_size() - tell();
+    size_t remaining_size() {
+        return size() - tell();
     }
 
     inline void read_into(void * buffer, size_t size)
@@ -190,7 +232,7 @@ public:
 
     template <typename T = uint8_t>
     inline list<T> read() {
-        return read<T>(get_remaining_size() / sizeof(T));
+        return read<T>(remaining_size() / sizeof(T));
     }
 
     template <typename T>
@@ -211,56 +253,16 @@ public:
     }
 
     inline string read_string() {
-        return read_string(get_remaining_size());
+        return read_string(remaining_size());
     }
 
     inline void write_string(string_view text) {
         write_from(text.data(), text.size());
     }
 
-    inline string read_line()
-    {
-        string line;
+    string read_line();
 
-        for (;;) {
-            int c = std::fgetc(_file);
-            if (c == EOF) {
-                if (line.empty()) {
-                    throw last_system_error();
-                }
-
-                break;
-            }
-
-            line.push_back(c);
-            if (c == '\n') {
-                break;
-            }
-        }
-
-        return line;
-    }
-
-    inline list<string> read_lines()
-    {
-        list<string> lines;
-
-        const auto& text = read_string();
-        string_view view(text);
-
-        auto it = view.find('\n');
-        while (!view.empty() && it != string::npos) {
-            lines.emplace_back(view.substr(0, it + 1));
-            view = view.substr(it + 1);
-            it = view.find('\n');
-        }
-
-        if (!view.empty()) {
-            lines.emplace_back(view);
-        }
-
-        return lines;
-    }
+    list<string> read_lines();
 
     inline void write_line(string_view line)
     {
@@ -269,7 +271,7 @@ public:
     }
 
     template <ranges::viewable_range R>
-        requires is_string_like_v<ranges::range_value_t<R>>
+        requires is_string_v<ranges::range_value_t<R>> or is_cstring_v<ranges::range_value_t<R>>
     inline void write_lines(R&& range)
     {
         for (const auto& line : range) {
@@ -278,7 +280,7 @@ public:
     }
 
     template <typename T>
-        requires is_string_like_v<T>
+        requires is_string_v<T> or is_cstring_v<T>
     inline void write_lines(initializer_list<T> lines) {
         write_lines(list<T>(lines));
     }
@@ -300,6 +302,8 @@ public:
 private:
 
     std::FILE * _file = nullptr;
+
+    slw::path _path;
 
 }; // class file
 
