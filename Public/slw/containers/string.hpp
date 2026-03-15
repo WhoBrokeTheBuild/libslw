@@ -8,7 +8,12 @@ namespace slw {
 
 using std::string;
 
+using std::basic_string;
+
 using std::string_view;
+
+using std::basic_string_view;
+
 
 using namespace std::string_literals;
 
@@ -21,18 +26,12 @@ struct is_string : std::false_type { };
 template <typename CharT, typename Traits, typename Alloc>
 struct is_string<std::basic_string<CharT, Traits, Alloc>> : std::true_type { };
 
-template <typename T>
-constexpr bool is_string_v = is_string<T>::value;
-
 
 template <typename T>
 struct is_string_view : std::false_type { };
 
 template <typename CharT, typename Traits>
 struct is_string_view<std::basic_string_view<CharT, Traits>> : std::true_type { };
-
-template <typename T>
-constexpr bool is_string_view_v = is_string_view<T>::value;
 
 
 template <typename T>
@@ -49,6 +48,13 @@ struct is_cstring<char[N]> : std::true_type { };
 
 template<size_t N>
 struct is_cstring<const char[N]> : std::true_type { };
+
+
+template <typename T>
+constexpr bool is_string_v = is_string<T>::value;
+
+template <typename T>
+constexpr bool is_string_view_v = is_string_view<T>::value;
 
 template <typename T>
 constexpr bool is_cstring_v = is_cstring<T>::value;

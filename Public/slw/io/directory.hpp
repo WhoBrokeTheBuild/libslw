@@ -21,7 +21,7 @@ namespace directory {
         return std::filesystem::temp_directory_path();
     }
 
-    static std::filesystem::space_info space(const path& path) {
+    static inline std::filesystem::space_info space(const path& path) {
         return std::filesystem::space(path);
     }
 

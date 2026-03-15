@@ -6,6 +6,24 @@
 
 namespace slw {
 
+using std::u8string;
+
+typedef basic_strings<char8_t> u8strings;
+
+using std::u8string_view;
+
+typedef basic_string_views<char8_t> u8string_views;
+
+
+using std::u32string;
+
+typedef basic_strings<char32_t> u32strings;
+
+using std::u32string_view;
+
+typedef basic_string_views<char32_t> u32string_views;
+
+
 namespace unicode {
 
     class invalid_sequence : public runtime_error
@@ -17,14 +35,6 @@ namespace unicode {
         { }
 
     }; // class invalid_sequence
-
-    using std::u8string;
-
-    using std::u8string_view;
-
-    using std::u32string;
-
-    using std::u32string_view;
 
     // constexpr bool is_valid(u8string_view string);
 

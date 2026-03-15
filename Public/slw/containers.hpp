@@ -6,6 +6,7 @@
 #include <slw/containers/initializer_list.hpp>
 #include <slw/containers/list.hpp>
 #include <slw/containers/set.hpp>
+#include <slw/containers/stack.hpp>
 #include <slw/containers/string.hpp>
 #include <slw/containers/tuple.hpp>
 #include <slw/containers/view.hpp>

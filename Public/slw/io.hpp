@@ -1,6 +1,7 @@
 #ifndef SLW_IO_HPP
 #define SLW_IO_HPP
 
+#include <slw/io/console.hpp>
 #include <slw/io/directory.hpp>
 #include <slw/io/file.hpp>
 #include <slw/io/paths.hpp>

@@ -11,9 +11,28 @@ TEST(UnicodeTest, Length)
     EXPECT_EQ(unicode::length(u8"🔥"), 1);
     EXPECT_EQ(unicode::length(u8"© 2026"), 6);
     EXPECT_EQ(unicode::length(u8"Hello, my name is ᛏᚱᛅᚴᛁ"), 23);
+
+    EXPECT_EQ(u8string_view(u8"hello").length(), 5);
+    EXPECT_EQ(u8string_view(u8"🔥").length(), 4);
+    EXPECT_EQ(u8string_view(u8"© 2026").length(), 7);
+    EXPECT_EQ(u8string_view(u8"Hello, my name is ᛏᚱᛅᚴᛁ").length(), 33);
     
     char8_t invalid = 0b10000000;
     EXPECT_THROW(unicode::length({&invalid, 1}), unicode::invalid_sequence);
+}
+
+TEST(UnicodeTest, Strings)
+{
+    u8string utf8(u8"hello world");
+    const auto& parts8 = u8string_views::split(utf8, ' ');
+    ASSERT_EQ(parts8.size(), 2);
+
+    u32string utf32(U"hello world");
+    const auto& parts32 = u32string_views::split(utf32, ' ');
+    ASSERT_EQ(parts32.size(), 2);
+
+    const auto& temp = u8string_views::split(u8"hello world", ' ');
+    ASSERT_EQ(temp.size(), 2);
 }
 
 int main(int argc, char * argv[]) {

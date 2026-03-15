@@ -241,6 +241,13 @@ public:
     }
 
     template <typename T>
+    inline T read_object() {
+        T object = {};
+        read_into(&object, sizeof(T));
+        return object;
+    }
+
+    template <typename T>
     inline void write_object(const T& object) {
         write_from(&object, sizeof(T));
     }

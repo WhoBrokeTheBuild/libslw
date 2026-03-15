@@ -1,93 +1,60 @@
 #ifndef SLW_STRINGS_HPP
 #define SLW_STRINGS_HPP
 
-#include <slw/containers/list.hpp>
-#include <slw/containers/string.hpp>
-#include <slw/containers/view.hpp>
+#include <slw/containers.hpp>
+#include <slw/constraints.hpp>
 
 namespace slw {
 
-using std::string;
+template <typename CharT, typename Traits = std::char_traits<CharT>>
+struct basic_string_views
+{
+    typedef CharT value_t;
+    typedef basic_string<CharT, Traits> string_t;
+    typedef basic_string_view<CharT, Traits> string_view_t;
 
-using std::string_view;
 
-using namespace std::string_literals;
-
-namespace string_views {
-
-    // TODO: Improve
-    constexpr string_view WHITESPACE = " \t\n\r\f\v";
-
-    // TODO: Improve
-    template <typename T>
-    concept delimeter = is_string_v<T> or is_cstring_v<T> or std::is_same_v<char, T>;
-
-    inline constexpr size_t length(char) {
-        return 1;
+    static inline constexpr string_t whitespace() {
+        return { ' ', '\n', '\r', '\f', '\v' };
     }
 
-    inline constexpr size_t length(string_view str) {
-        return std::size(str);
-    }
 
-    inline constexpr list<string_view> split(string_view str, delimeter auto delim)
+    static inline constexpr list<string_view_t> split(string_view_t str, string_view_t delim)
     {
-        list<string_view> parts;
-
-        size_t delimSize = length(delim);
-
-        auto it = str.find(delim);
-        while (it != string_view::npos) {
-            parts.emplace_back(str.substr(0, it));
-            str = str.substr(it + delimSize);
-            it = str.find(delim);
-        }
-
-        parts.emplace_back(str);
-
-        return parts;
+        auto result = views::split(str, delim);
+        return { std::begin(result), std::end(result) };
     }
 
-    inline constexpr string join(view<string_view> parts, delimeter auto delim)
-    {
-        if (parts.empty()) {
-            return {};
-        }
-
-        size_t size = (parts.size() - 1) * length(delim);
-        for (const auto& part : parts) {
-            size += length(part);
-        }
-
-        string result;
-        result.reserve(size);
-
-        for (size_t i = 0; i < parts.size() - 1; ++i) {
-            result.append(parts[i]);
-            result += delim;
-        }
-
-        result.append(parts.back());
-
-        return result;
+    static inline constexpr list<string_view_t> split(string_view_t str, value_t delim) {
+        return split(str, string_view_t(&delim, 1));
     }
 
-    template <ranges::input_range R>
-    inline constexpr string join(R&& range, delimeter auto delim) {
-        return join(view<string_view>(range), delim);
+
+    template <ranges::viewable_range R>
+        requires is_string_view_v<ranges::range_value_t<R>>
+    static inline constexpr string_t join(R&& range, string_view_t delim) {
+        auto result = views::join_with(range, delim);
+        return string_t(std::begin(result), std::end(result));
+    }
+
+    template <ranges::viewable_range R>
+    static inline constexpr string_t join(R&& range, value_t delim) {
+        return join(std::move(range), string_view_t(&delim, 1));
     }
 
     template <typename T>
-        requires is_string_v<T> or is_cstring_v<T>
-    inline constexpr string join(std::initializer_list<T> parts, delimeter auto delim) {
-        return join(list<string_view>(parts.begin(), parts.end()), delim);
+        requires concepts::characters<T>
+    static inline constexpr string_t join(initializer_list<T> values, auto delim) {
+        return join(list<string_view_t>(std::begin(values), std::end(values)), delim);
     }
 
-    inline constexpr string_view trim_left(string_view str, string_view filter = WHITESPACE) {
+
+    static inline constexpr string_view_t trim_left(string_view_t str, string_view_t filter = whitespace()) {
         return str.substr(str.find_first_not_of(filter));
     }
 
-    inline constexpr string_view trim_right(string_view str, string_view filter = WHITESPACE) {
+
+    static inline constexpr string_view_t trim_right(string_view_t str, string_view_t filter = whitespace()) {
         auto it = str.find_last_not_of(filter);
         if (it == string_view::npos) {
             return str;
@@ -95,61 +62,78 @@ namespace string_views {
         return str.substr(0, it + 1);
     }
 
-    inline constexpr string_view trim(string_view str, string_view filter = WHITESPACE) {
-        return trim_left(trim_right(str), filter);
+
+    static inline constexpr string_view_t trim(string_view_t str, string_view_t filter = whitespace()) {
+        return trim_left(trim_right(str, filter), filter);
     }
 
-} // namespace string_views
+}; // basic_string_views
 
-namespace strings {
+typedef basic_string_views<char> string_views;
 
-    using string_views::WHITESPACE;
+template <typename CharT, typename Traits = std::char_traits<CharT>>
+struct basic_strings
+{
+    typedef CharT value_t;
+    typedef basic_string<CharT, Traits> string_t;
+    typedef basic_string_view<CharT, Traits> string_view_t;
+    typedef basic_string_views<CharT, Traits> string_views_t;
 
-    using string_views::delimeter;
 
-    using string_views::length;
+    static inline constexpr string_t whitespace() {
+        return string_views_t::whitespace();
+    }
+    
 
-    inline constexpr list<string> split(string_view str, delimeter auto delim)
+    static inline constexpr list<string_t> split(string_view_t str, string_view_t delim)
     {
-        list<string> parts;
-        for (const auto& part : string_views::split(str, delim)) {
-            parts.emplace_back(part);
-        }
-        return parts;
+        const auto& views = string_views_t::split(str, delim);
+        return list<string_t>(std::begin(views), std::end(views));
     }
 
-    inline constexpr string join(view<string> parts, delimeter auto delim)
-    {
-        list<string_view> temp(parts.begin(), parts.end());
-        return string_views::join(temp, delim);
+    static inline constexpr list<string_t> split(string_view_t str, value_t delim) {
+        return split(str, string_view_t(&delim, 1));
     }
 
-    template <ranges::input_range R>
-    inline constexpr string join(R&& range, delimeter auto delim) {
-        return join(view<string>(range), delim);
+
+    template <ranges::viewable_range R>
+        requires is_string_v<ranges::range_value_t<R>>
+    static inline constexpr string_t join(R&& range, string_view_t delim) {
+        auto result = views::join_with(range, delim);
+        return string_t(std::begin(result), std::end(result));
+    }
+
+    template <ranges::viewable_range R>
+    static inline constexpr string_t join(R&& range, value_t delim) {
+        return join(std::move(range), string_view_t(&delim, 1));
     }
 
     template <typename T>
-        requires is_string_v<T> or is_cstring_v<T>
-    inline constexpr string join(std::initializer_list<T> parts, delimeter auto delim)
-    {
-        list<string> temp(parts.begin(), parts.end());
-        return join(temp, delim);
+        requires concepts::characters<T>
+    static inline constexpr string_t join(initializer_list<T> values, auto delim) {
+        return join(list<string_t>(std::begin(values), std::end(values)), delim);
     }
 
-    inline constexpr string trim_left(string_view str, string_view filter = WHITESPACE) {
-        return string(string_views::trim_left(str, filter));
+
+    static inline constexpr string_t trim_left(string_view_t str, string_view_t filter = whitespace()) {
+        return string_views_t::trim_left(str, filter);
     }
 
-    inline constexpr string trim_right(string_view str, string_view filter = WHITESPACE) {
-        return string(string_views::trim_right(str, filter));
+
+    static inline constexpr string_t trim_right(string_view_t str, string_view_t filter = whitespace()) {
+        return string_views_t::trim_right(str, filter);
     }
 
-    inline constexpr string trim(string_view str, string_view filter = WHITESPACE) {
-        return string(string_views::trim(str, filter));
+
+    static inline constexpr string_t trim(string_view_t str, string_view_t filter = whitespace()) {
+        return string_views_t::trim(str, filter);
     }
 
-} // namespace strings
+}; // basic_strings
+
+typedef basic_strings<char> strings;
+
+// } // namespace strings
 
 } // namespace slw
 
