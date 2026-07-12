@@ -37,23 +37,17 @@ file(GLOB_RECURSE
     "Public/**/*.hpp"
 )
 
-file(GLOB_RECURSE
-    _private_list
-    "Private/*.h"
-    "Private/*.c"
-    "Private/*.hpp"
-    "Private/*.cpp"
-)
+add_library(SLW INTERFACE)
 
-add_library(
+target_sources(
     SLW
+    INTERFACE
     ${_public_list}
-    ${_private_list}
 )
 
 target_include_directories(
     SLW
-    PUBLIC
+    INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/Public
 )
 
