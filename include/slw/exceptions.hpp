@@ -11,6 +11,8 @@ using std::exception;
 
 using std::runtime_error;
 
+using std::out_of_range;
+
 using std::system_error;
 
 using std::make_error_code;
