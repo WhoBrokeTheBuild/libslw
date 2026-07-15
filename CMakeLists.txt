@@ -26,7 +26,7 @@ FetchContent_Declare(
     URL "https://github.com/nlohmann/json/archive/refs/tags/v3.12.0.zip"
     FIND_PACKAGE_ARGS 3.12.0
 )
-FetchContent_MakeAvailable(nlohmann_json)
+list(APPEND _fetch_content_list nlohmann_json)
 
 include(CTest)
 if(BUILD_TESTING)
@@ -37,15 +37,16 @@ if(BUILD_TESTING)
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG        v1.17.0
     )
-
-    FetchContent_MakeAvailable(googletest)
+    list(APPEND _fetch_content_list googletest)
     
 endif()
 
-if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Public/slw/ext/nlohmann/json.hpp)
+FetchContent_MakeAvailable(${_fetch_content_list})
+
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/slw/ext/nlohmann/json.hpp)
     file(COPY
         ${nlohmann_json_SOURCE_DIR}/single_include/
-        DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/Public/slw/ext/
+        DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/include/slw/ext/
     )
 endif()
 
