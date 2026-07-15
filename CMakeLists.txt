@@ -56,16 +56,16 @@ file(GLOB_RECURSE
     "include/**/*.hpp"
 )
 
-add_library(SLW INTERFACE)
+add_library(libslw INTERFACE)
 
 target_sources(
-    SLW
+    libslw
     INTERFACE
         ${_include_list}
 )
 
 target_include_directories(
-    SLW
+    libslw
     INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
@@ -87,7 +87,7 @@ foreach(_test_source IN LISTS _test_source_list)
     target_link_libraries(
         ${_test_name}
         PRIVATE
-            SLW
+            libslw
             GTest::gtest
     )
     
