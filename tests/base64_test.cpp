@@ -49,7 +49,7 @@ TEST(Base64Test, AllValues)
         "q6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj"
         "5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==";
 
-    std::vector<uint8_t> data; // { 0 .. 255 }
+    list<uint8_t> data; // { 0 .. 255 }
     for (int i = 0; i <= UINT8_MAX; ++i) {
         data.push_back(i);
     }
@@ -69,7 +69,7 @@ TEST(Base64Test, Random)
 
     size_t length = rand() % 1000;
 
-    std::vector<uint8_t> data;
+    list<uint8_t> data;
     for (int i = 0; i < length; ++i) {
         data.push_back(rand() % 256);
     }

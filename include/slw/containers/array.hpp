@@ -9,6 +9,7 @@ namespace slw {
 
 using std::array;
 
+// Verify this works as intended
 using std::is_array_v;
 
 namespace concepts {

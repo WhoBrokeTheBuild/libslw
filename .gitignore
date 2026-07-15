@@ -6,3 +6,6 @@
 
 # CMake
 [Bb]uild/
+
+# External dependencies
+include/slw/ext/
