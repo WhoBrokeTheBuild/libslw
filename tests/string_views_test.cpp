@@ -22,21 +22,21 @@ TEST(StringViewsTest, Split)
 
     const auto& ip = string_views::split("127.0.0.1", '.');
     ASSERT_EQ(ip.size(), 4);
-    ASSERT_TRUE(ranges::equal(ip, list<string>{ "127", "0", "0", "1" }));
+    ASSERT_PRED2(ranges::equal, ip, list<string>({ "127", "0", "0", "1" }));
 
     const auto& row = string_views::split("John,Doe,45,,555-1234", ',');
     ASSERT_EQ(row.size(), 5);
-    ASSERT_TRUE(ranges::equal(row, list<string>{ "John", "Doe", "45", "", "555-1234" }));
+    ASSERT_PRED2(ranges::equal, row, list<string>({ "John", "Doe", "45", "", "555-1234" }));
 
     const auto& result = string_views::split("testing--123---hello----world", "--");
     ASSERT_EQ(result.size(), 5);
-    ASSERT_TRUE(ranges::equal(result, list<string>{ "testing", "123", "-hello", "", "world" }));
+    ASSERT_PRED2(ranges::equal, result, list<string>({ "testing", "123", "-hello", "", "world" }));
 
     string str = "a,b,c";
-    ASSERT_TRUE(ranges::equal(string_views::split(str, ','), list<string>{ "a", "b", "c" }));
+    ASSERT_PRED2(ranges::equal, string_views::split(str, ','), list<string>({ "a", "b", "c" }));
 
     string_view view = "a,b,c";
-    ASSERT_TRUE(ranges::equal(string_views::split(view, ','), list<string>{ "a", "b", "c" }));
+    ASSERT_PRED2(ranges::equal, string_views::split(view, ','), list<string>({ "a", "b", "c" }));
 }
 
 TEST(StringViewsTest, Join)
