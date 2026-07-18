@@ -35,10 +35,10 @@ inline list<uint8_t> decode(string_view code)
 
     size_t index;
     for (index = 0; (index + 3) < code.size(); index += 4) {
-        uint8_t a = _MAPPING[code[index + 0]];
-        uint8_t b = _MAPPING[code[index + 1]];
-        uint8_t c = _MAPPING[code[index + 2]];
-        uint8_t d = _MAPPING[code[index + 3]];
+        uint8_t a = _MAPPING[static_cast<unsigned char>(code[index + 0])];
+        uint8_t b = _MAPPING[static_cast<unsigned char>(code[index + 1])];
+        uint8_t c = _MAPPING[static_cast<unsigned char>(code[index + 2])];
+        uint8_t d = _MAPPING[static_cast<unsigned char>(code[index + 3])];
 
         if (a == 0xFF || b == 0xFF || c == 0xFF || d == 0xFF) {
             throw decode_error();

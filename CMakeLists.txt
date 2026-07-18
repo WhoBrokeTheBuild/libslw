@@ -38,10 +38,16 @@ if(BUILD_TESTING)
         GIT_TAG        v1.17.0
     )
     list(APPEND _fetch_content_list googletest)
-    
+
 endif()
 
 FetchContent_MakeAvailable(${_fetch_content_list})
+
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+    
+endif()
 
 if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/include/slw/ext/nlohmann/json.hpp)
     file(COPY
@@ -99,4 +105,13 @@ foreach(_test_source IN LISTS _test_source_list)
 
 endforeach()
 
+# Variant? Queue? Linked List? Stack?
+# JSON
+# INI / TOML
+# Chrono
+# Logging
+# Algorithm?
+# Threading? Future
+# Exceptions?
+# Random
 

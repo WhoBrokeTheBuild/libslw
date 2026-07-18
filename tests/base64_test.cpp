@@ -56,7 +56,7 @@ TEST(Base64Test, AllValues)
 
     auto code = base64::encode(data);
 
-    const auto& result = base64::decode(code);
+    const auto& result = base64::decode(CODE);
 
     ASSERT_EQ(data.size(), result.size());
     

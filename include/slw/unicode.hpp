@@ -130,7 +130,7 @@ namespace unicode {
             }
             else if (code <= 0xFFFF) {
                 result.push_back(0b11100000 | ((code >> 12) & 0x3F));
-                result.push_back(0b10000000 | (code >> 6) & 0x3F);
+                result.push_back(0b10000000 | ((code >> 6) & 0x3F));
                 result.push_back(0b10000000 | (code & 0x3F));
             }
             else if (code <= 0x10FFFF) {
