@@ -2,6 +2,8 @@
 #define SLW_ARGUMENT_PARSER_HPP
 
 #include <slw/strings.hpp>
+#include <slw/io/console.hpp>
+#include <slw/exceptions.hpp>
 
 #include <functional>
 
@@ -19,41 +21,37 @@ public:
 
         enum class type 
         {
-            Undefined = -1,
-            String,
-            CString,
-            Bool,
-            Int,
-            Float,
-            StringCallback,
-            CStringCallback,
-            BoolCallback,
-            IntCallback,
-            FloatCallback,
+            UNDEFINED = -1,
+            STRING,
+            BOOL,
+            INT,
+            FLOAT,
+            STRING_CALLBACK,
+            BOOL_CALLBACK,
+            INT_CALLBACK,
+            FLOAT_CALLBACK,
         };
 
         char        short_name;
-        string      long_name;
-        string      description;
+        string_view long_name;
+        string_view description;
 
         type        type;
         unsigned    count;
 
         union {
-            string *        string_ptr;
-            const char **   cstring_ptr;
-            bool *          bool_ptr;
-            int *           int_ptr;
-            float *         float_ptr;
+            string * string_ptr;
+            bool *   bool_ptr;
+            int *    int_ptr;
+            float *  float_ptr;
         };
 
-        function<void(string)>          string_callback;
-        function<void(const char *)>    cstring_callback;
-        function<void(bool)>            bool_callback;
-        function<void(int)>             int_callback;
-        function<void(float)>           float_callback;
+        function<void(string)> string_callback;
+        function<void(bool)>   bool_callback;
+        function<void(int)>    int_callback;
+        function<void(float)>  float_callback;
 
-        inline void process(const char * value)
+        inline void process(string value)
         {
             auto parse_bool = [](string_view str) {
                 return !(
@@ -66,31 +64,21 @@ public:
             ++count;
 
             switch (type) {
-            case type::String:
+            case type::STRING:
                 if (string_ptr) {
                     *string_ptr = value;
                 }
                 break;
-            case type::StringCallback:
+            case type::STRING_CALLBACK:
                 if (string_callback) {
-                    if (value) {
+                    if (!value.empty()) {
                         string_callback(value);
                     }
                 }
                 break;
-            case type::CString:
-                if (cstring_ptr) {
-                    *cstring_ptr = value;
-                }
-                break;
-            case type::CStringCallback:
-                if (cstring_callback) {
-                    cstring_callback(value);
-                }
-                break;
-            case type::Bool:
+            case type::BOOL:
                 if (bool_ptr) {
-                    if (value) {
+                    if (!value.empty()) {
                         *bool_ptr = parse_bool(value);
                     }
                     else {
@@ -98,9 +86,9 @@ public:
                     }
                 }
                 break;
-            case type::BoolCallback:
+            case type::BOOL_CALLBACK:
                 if (bool_callback) {
-                    if (value) {
+                    if (!value.empty()) {
                         bool_callback(parse_bool(value));
                     }
                     else {
@@ -108,31 +96,31 @@ public:
                     }
                 }
                 break;
-            case type::Int:
+            case type::INT:
                 if (int_ptr) {
-                    if (value) {
-                        *int_ptr = strtol(value, nullptr, 10);
+                    if (!value.empty()) {
+                        *int_ptr = strtol(value.c_str(), nullptr, 10);
                     }
                 }
                 break;
-            case type::IntCallback:
+            case type::INT_CALLBACK:
                 if (int_callback) {
-                    if (value) {
-                        int_callback(strtol(value, nullptr, 10));
+                    if (!value.empty()) {
+                        int_callback(strtol(value.c_str(), nullptr, 10));
                     }
                 }
                 break;
-            case type::Float:
+            case type::FLOAT:
                 if (float_ptr) {
-                    if (value) {
-                        *float_ptr = strtof(value, nullptr);
+                    if (!value.empty()) {
+                        *float_ptr = strtof(value.c_str(), nullptr);
                     }
                 }
                 break;
-            case type::FloatCallback:
+            case type::FLOAT_CALLBACK:
                 if (float_callback) {
-                    if (value) {
-                        float_callback(strtof(value, nullptr));
+                    if (!value.empty()) {
+                        float_callback(strtof(value.c_str(), nullptr));
                     }
                 }
                 break;
@@ -154,19 +142,19 @@ public:
         , argv(nullptr)
     { }
 
-    flag * add_flag(flag && flag)
+    flag * add_flag(flag&& flag)
     {
         _flags.push_back(flag);
         return &_flags.back();
     }
 
-    flag * add_string(char short_name, string long_name, string * value_ptr, string description)
+    flag * add_string(char short_name, string_view long_name, string * value_ptr, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::String,
+            .type = flag::type::STRING,
             .string_ptr = value_ptr,
         };
 
@@ -174,27 +162,13 @@ public:
         return &_flags.back();
     }
     
-    flag * add_cstring(char short_name, string long_name, const char ** value_ptr, string description)
+    flag * add_bool(char short_name, string_view long_name, bool * value_ptr, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::CString,
-            .cstring_ptr = value_ptr,
-        };
-
-        _flags.push_back(flag);
-        return &_flags.back();
-    }
-    
-    flag * add_bool(char short_name, string long_name, bool * value_ptr, string description)
-    {
-        flag flag = {
-            .short_name = short_name,
-            .long_name = long_name,
-            .description = description,
-            .type = flag::type::Bool,
+            .type = flag::type::BOOL,
             .bool_ptr = value_ptr,
         };
 
@@ -202,13 +176,13 @@ public:
         return &_flags.back();
     }
     
-    flag * add_int(char short_name, string long_name, int * value_ptr, string description)
+    flag * add_int(char short_name, string_view long_name, int * value_ptr, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::Int,
+            .type = flag::type::INT,
             .int_ptr = value_ptr,
         };
 
@@ -216,13 +190,13 @@ public:
         return &_flags.back();
     }
     
-    flag * add_float(char short_name, string long_name, float * value_ptr, string description)
+    flag * add_float(char short_name, string_view long_name, float * value_ptr, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::Float,
+            .type = flag::type::FLOAT,
             .float_ptr = value_ptr,
         };
 
@@ -230,13 +204,13 @@ public:
         return &_flags.back();
     }
 
-    flag * add_string_callback(char short_name, string long_name, function<void(string)> callback, string description)
+    flag * add_string_callback(char short_name, string_view long_name, function<void(string)> callback, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::StringCallback,
+            .type = flag::type::STRING_CALLBACK,
             .string_callback = callback,
         };
 
@@ -244,27 +218,13 @@ public:
         return &_flags.back();
     }
 
-    flag * add_cstring_callback(char short_name, string long_name, function<void(const char *)> callback, string description)
+    flag * add_bool_callback(char short_name, string_view long_name, function<void(bool)> callback, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::CStringCallback,
-            .cstring_callback = callback,
-        };
-
-        _flags.push_back(flag);
-        return &_flags.back();
-    }
-
-    flag * add_bool_callback(char short_name, string long_name, function<void(bool)> callback, string description)
-    {
-        flag flag = {
-            .short_name = short_name,
-            .long_name = long_name,
-            .description = description,
-            .type = flag::type::BoolCallback,
+            .type = flag::type::BOOL_CALLBACK,
             .bool_callback = callback,
         };
 
@@ -272,13 +232,13 @@ public:
         return &_flags.back();
     }
 
-    flag * add_int_callback(char short_name, string long_name, function<void(int)> callback, string description)
+    flag * add_int_callback(char short_name, string_view long_name, function<void(int)> callback, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::IntCallback,
+            .type = flag::type::INT_CALLBACK,
             .int_callback = callback,
         };
 
@@ -286,13 +246,13 @@ public:
         return &_flags.back();
     }
 
-    flag * add_float_callback(char short_name, string long_name, function<void(float)> callback, string description)
+    flag * add_float_callback(char short_name, string_view long_name, function<void(float)> callback, string_view description)
     {
         flag flag = {
             .short_name = short_name,
             .long_name = long_name,
             .description = description,
-            .type = flag::type::FloatCallback,
+            .type = flag::type::FLOAT_CALLBACK,
             .float_callback = callback,
         };
 
@@ -300,10 +260,7 @@ public:
         return &_flags.back();
     }
 
-    ///
-    ///
-    ///
-    inline bool parse(int main_argc, char * main_argv[])
+    inline void parse(int main_argc, char * main_argv[])
     {
         argc = main_argc;
         argv = main_argv;
@@ -325,12 +282,12 @@ public:
                     }
 
                     // Long
-                    char * key = pch;
-                    char * value = NULL;
+                    string_view key = pch;
+                    string_view value;
 
                     char * divider = strchr(pch, '=');
                     if (divider) {
-                        *divider = '\0';
+                        key = key.substr(0, divider - pch);
                         value = divider + 1;
                     }
 
@@ -341,19 +298,18 @@ public:
                         if (flag.long_name == key) {
                             found = true;
 
-                            if (value) {
-                                flag.process(value);
+                            if (!value.empty()) {
+                                flag.process(string(value));
+                            }
+                            else if (flag.type == flag::type::BOOL || flag.type == flag::type::BOOL_CALLBACK) {
+                                flag.process(string());
                             }
                             else if (next_arg_is_value) {
-                                flag.process(argv[i + 1]);
+                                flag.process(string(argv[i + 1]));
                                 ++i;
                             }
-                            else if (flag.type == flag::type::Bool || flag.type == flag::type::BoolCallback) {
-                                flag.process(nullptr);
-                            }
                             else {
-                                fprintf(stderr, "%s: option '--%s' requires an value\n", program.c_str(), key);
-                                return false;
+                                throw invalid_argument(format("option '-{}' requires a value", key));
                             }
 
                             break;
@@ -361,8 +317,7 @@ public:
                     }
 
                     if (!found) {
-                        fprintf(stderr, "%s: unrecognized option '--%s'\n", program.c_str(), key);
-                        return false;
+                        throw invalid_argument(format("unrecognized option '--{}'", key));
                     }
                 }
                 else {
@@ -377,15 +332,14 @@ public:
                                 found = true;
 
                                 if (is_last_short_flag && next_arg_is_value) {
-                                    flag.process(argv[i + 1]);
+                                    flag.process(string(argv[i + 1]));
                                     ++i;
                                 }
-                                else if (flag.type == flag::type::Bool || flag.type == flag::type::BoolCallback) {
-                                    flag.process(nullptr);
+                                else if (flag.type == flag::type::BOOL || flag.type == flag::type::BOOL_CALLBACK) {
+                                    flag.process(string());
                                 }
                                 else {
-                                    fprintf(stderr, "%s: option '-%c' requires an value\n", program.c_str(), *pch);
-                                    return false;
+                                    throw invalid_argument(format("option '-{}' requires a value", *pch));
                                 }
 
                                 break;
@@ -393,8 +347,7 @@ public:
                         }
 
                         if (!found) {
-                            fprintf(stderr, "%s: unrecognized option '-%c'\n", program.c_str(), *pch);
-                            return false;
+                            throw invalid_argument(format("unrecognized option '-{}'", *pch));
                         }
 
                         ++pch;
@@ -409,39 +362,43 @@ public:
 
         argc = static_cast<int>(_argv.size());
         argv = _argv.data();
-
-        return true;
     }
 
-    void print_usage(const string& usage, const string& above, const string& below)
+    string get_usage(string_view usage, string_view above, string_view below)
     {
-        printf("Usage: %s %s\n", program.c_str(), usage.c_str());
-        printf("%s\n\n", above.c_str());
+        string output = format("Usage: {} {}\n", program, usage);
+        output += format("{}\n\n", above);
 
         for (auto& flag : _flags) {
-            printf("  ");
+            output += "  ";
             if (flag.short_name != '\0') {
-                printf("-%c, ", flag.short_name);
+                output += format("-{}, ", flag.short_name);
             }
             else {
-                printf("    ");
+                output += "    ";
             }
 
             if (!flag.long_name.empty()) {
-                printf("--%s", flag.long_name.c_str());
+                output += format("--{}", flag.long_name);
             }
             if (flag.long_name.size() > 20) {
-                printf("\n                            ");
+                output += "\n                            ";
             }
             else {
                 for (size_t i = 0; i < 20 - flag.long_name.size(); ++i) {
-                    printf(" ");
+                    output += " ";
                 }
             }
-            printf("%s\n", flag.description.c_str());
+            output += format("{}\n", flag.description);
         }
 
-        printf("\n%s\n", below.c_str());
+        output += format("\n{}\n", below);
+        return output;
+    }
+
+    inline void print_usage(const string& usage, const string& above, const string& below)
+    {
+        print("{}", get_usage(usage, above, below));
     }
 
 private:
