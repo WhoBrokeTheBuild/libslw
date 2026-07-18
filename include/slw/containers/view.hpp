@@ -10,6 +10,8 @@ namespace slw {
 template <typename Type, size_t Extent = std::dynamic_extent>
 using view = std::span<Type, Extent>;
 
+using std::dynamic_extent;
+
 
 template <typename T>
 struct is_view : std::false_type { };

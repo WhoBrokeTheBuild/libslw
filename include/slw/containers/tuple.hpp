@@ -9,6 +9,8 @@ namespace slw {
 
 using std::tuple;
 
+using std::tie;
+
 using std::apply;
 
 } // namespace slw

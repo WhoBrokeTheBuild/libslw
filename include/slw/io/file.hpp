@@ -32,12 +32,12 @@ public:
 
     static inline file create_temporary(std::string_view prefix = "", const char * mode = "wb", const path& directory = directory::temp()) {
         slw::path file_template = directory / std::format("{}{}", prefix, "XXXXXX");
-        const char * result = ::mktemp(const_cast<char *>(file_template.c_str()));
-        if (!result) {
+        int fd = ::mkstemp(const_cast<char *>(file_template.c_str()));
+        if (fd < 0) {
             throw last_system_error();
         }
         
-        return file(file_template, mode);
+        return file(fd, mode, file_template);
     }
 
     static inline bool copy(const path& src, const path& dst) {
@@ -65,6 +65,11 @@ public:
     }
 
     file() = default;
+
+    file(int fd, const char * mode, const path& path = {})
+        : _file(fdopen(fd, mode))
+        , _path(path)
+    { }
 
     file(FILE * fp, const path& path = {})
         : _file(fp)
@@ -102,6 +107,11 @@ public:
             std::fclose(_file);
             _file = nullptr;
         }
+    }
+
+    // TODO: Rename
+    int fd() const {
+        return fileno(_file);
     }
 
     FILE * c_file() const {

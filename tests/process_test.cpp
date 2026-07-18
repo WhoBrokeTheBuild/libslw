@@ -1,36 +1,144 @@
 #include <slw/process.hpp>
+#include <slw/thread.hpp>
+#include <slw/io/file.hpp>
 
 #include <gtest/gtest.h>
 
 using namespace slw;
 
-TEST(Process, Run)
+TEST(Process, Simple)
 {
-    auto result = process::run("/bin/echo", { "hello world" });
-    ASSERT_EQ(result.code, 0);
-    ASSERT_EQ(result.out, "hello world\n");
-    ASSERT_EQ(result.err, "");
+    auto result = process({ "/bin/echo", "hello world" }).wait();
+    EXPECT_EQ(result.code, 0);
+    EXPECT_EQ(result.output, "hello world\n");
+    EXPECT_EQ(result.error, "");
+}
+
+TEST(Process, Failure)
+{
+    ASSERT_THROW(process({ "asdf" }), system_error);
+
+    ASSERT_THROW(process().open({ "asdf" }), system_error);
+
+    process proc({ "/bin/true" });
+    proc.wait();
+    ASSERT_THROW(proc.wait(), runtime_error);
 }
 
 TEST(Process, BackAndForth)
 {
-    process echo("/bin/cat", { "-" });
+    string out, err;
 
-    echo.communicate("hello\n");
-    std::this_thread::sleep_for(100ms);
-    ASSERT_EQ(echo.result().out, "");
+    process proc(
+        { "/bin/cat", "-" },
+        {
+            .input = process::PIPE,
+            .output = process::PIPE,
+        }
+    );
 
-    echo.communicate("world\n");
-    std::this_thread::sleep_for(100ms);
-    ASSERT_EQ(echo.result().out, "hello\n");
+    proc.write_input("hello\n");
+    tie(out, err) = proc.read_output(100ms);
 
-    echo.send_signal(SIGINT);
-    echo.wait();
+    proc.write_input("world\n");
+    tie(out, err) = proc.read_output(100ms);
 
-    auto result = echo.result();
-    ASSERT_EQ(result.code, 0);
-    ASSERT_EQ(result.out, "hello\nworld\n");
-    ASSERT_EQ(result.err, "");
+    proc.interrupt();
+
+    auto result = proc.wait();
+    EXPECT_EQ(result.code, 0);
+    EXPECT_EQ(result.output, "");
+    EXPECT_EQ(result.error, "");
+}
+
+TEST(Process, Timeout)
+{
+    string out, err;
+
+    process proc(
+        { "/bin/sh", "-c", "echo 'hello...'; sleep 2; echo 'goodbye'" },
+        {
+            .output = process::PIPE,
+            .error = process::PIPE,
+        }
+    );
+
+    tie(out, err) = proc.read_output(1s);
+    ASSERT_EQ(out, "hello...\n");
+    ASSERT_EQ(err, "");
+    
+    tie(out, err) = proc.read_output(3s);
+    ASSERT_EQ(out, "goodbye\n");
+    ASSERT_EQ(err, "");
+
+    proc.wait();
+
+    auto result = proc.result();
+    EXPECT_EQ(result.code, 0);
+    EXPECT_EQ(result.output, "");
+    EXPECT_EQ(result.error, "");
+}
+
+TEST(Process, Redirect)
+{
+    string out, err;
+
+    process proc(
+        { "/bin/sh", "-c", "echo output; >&2 echo error" },
+        {
+            .output = process::PIPE,
+            .error = process::STDOUT,
+        }
+    );
+
+    auto result = proc.wait();
+    EXPECT_EQ(result.code, 0);
+    EXPECT_EQ(result.output, "output\nerror\n");
+    EXPECT_EQ(result.error, "");
+}
+
+TEST(Process, FileOutput)
+{
+    auto log = file::create_temporary("libslw-", "wt+");
+    process proc(
+        { "/bin/echo", "testing" },
+        {
+            .output = log.fd(),
+        }
+    );
+
+    auto result = proc.wait();
+    EXPECT_EQ(result.code, 0);
+    EXPECT_EQ(result.output, "");
+    EXPECT_EQ(result.error, "");
+
+    log.rewind();
+    EXPECT_EQ(log.read_string(), "testing\n");
+}
+
+TEST(Process, FileInput)
+{
+    auto input = file::create_temporary("libslw-", "wt+");
+    input.write_lines({
+        "hello",
+        "world"
+    });
+
+    input.rewind();
+
+    process proc(
+        { "/bin/cat", "-" },
+        {
+            .input = input.fd(),
+            .output = process::PIPE,
+            .error = process::PIPE,
+        }
+    );
+
+    auto result = proc.wait();
+    EXPECT_EQ(result.code, 0);
+    EXPECT_EQ(result.output, "hello\nworld\n");
+    EXPECT_EQ(result.error, "");
 }
 
 int main(int argc, char * argv[]) {
