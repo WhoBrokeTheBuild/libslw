@@ -1,12 +1,13 @@
 #ifndef SLW_PROCESS_HPP
 #define SLW_PROCESS_HPP
 
-#include <slw/containers/list.hpp>
-#include <slw/strings.hpp>
-#include <slw/exceptions.hpp>
-#include <slw/environment.hpp>
-#include <slw/optional.hpp>
 #include <slw/chrono.hpp>
+#include <slw/environment.hpp>
+#include <slw/exceptions.hpp>
+#include <slw/list.hpp>
+#include <slw/optional.hpp>
+#include <slw/strings.hpp>
+#include <slw/tuple.hpp>
 
 #include <fcntl.h>
 #include <spawn.h>

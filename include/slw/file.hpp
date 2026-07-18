@@ -1,12 +1,11 @@
 #ifndef SLW_FILE_HPP
 #define SLW_FILE_HPP
 
+#include <slw/directory.hpp>
+#include <slw/list.hpp>
+#include <slw/paths.hpp>
 #include <slw/ranges.hpp>
 #include <slw/strings.hpp>
-#include <slw/containers.hpp>
-
-#include <slw/io/paths.hpp>
-#include <slw/io/directory.hpp>
 
 #include <cstdio>
 #include <print>

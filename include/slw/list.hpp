@@ -2,8 +2,7 @@
 #define SLW_LIST_HPP
 
 #include <slw/format.hpp>
-
-#include <slw/containers/view.hpp>
+#include <slw/view.hpp>
 
 #include <vector>
 

@@ -4,8 +4,7 @@
 #include <slw/format.hpp>
 #include <slw/integers.hpp>
 #include <slw/strings.hpp>
-
-#include <slw/containers/tuple.hpp>
+#include <slw/tuple.hpp>
 
 namespace slw {
 
@@ -55,11 +54,11 @@ inline void version::parse(string_view str)
 {
     const auto& parts = string_views::split(str, '.');
     if (parts.size() > 0) {
-        _major = to_integer(parts[0]);
+        _major = integers::parse(parts[0]);
         if (parts.size() > 1) {
-            _minor = to_integer(parts[1]);
+            _minor = integers::parse(parts[1]);
             if (parts.size() > 2) {
-                _patch = to_integer(parts[2]);
+                _patch = integers::parse(parts[2]);
             }
         }
     }

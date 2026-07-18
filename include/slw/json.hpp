@@ -1,8 +1,9 @@
 #ifndef SLW_JSON_HPP
 #define SLW_JSON_HPP
 
-#include <slw/containers.hpp>
+#include <slw/dict.hpp>
 #include <slw/integers.hpp>
+#include <slw/list.hpp>
 #include <slw/strings.hpp>
 #include <slw/unicode.hpp>
 

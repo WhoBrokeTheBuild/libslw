@@ -3,9 +3,7 @@
 
 #include <slw/strings.hpp>
 #include <slw/exceptions.hpp>
-#include <slw/containers/dict.hpp>
-
-#include <slw/io/console.hpp>
+#include <slw/dict.hpp>
 
 #include <unistd.h>
 

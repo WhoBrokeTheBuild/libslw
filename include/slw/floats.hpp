@@ -24,9 +24,11 @@ using std::chars_format;
 using std::is_floating_point_v;
 
 
+namespace floats {
+
 template <typename T = float>
     requires is_floating_point_v<T>
-constexpr inline T to_float(string_view str, chars_format fmt = chars_format::general)
+constexpr inline T parse(string_view str, chars_format fmt = chars_format::general)
 {
     T value = {};
     const auto& [ptr, ec] = std::from_chars(str.begin(), str.end(), value, fmt);
@@ -35,6 +37,8 @@ constexpr inline T to_float(string_view str, chars_format fmt = chars_format::ge
     }
     throw system_error(make_error_code(ec));
 }
+
+} // namespace integers
 
 
 namespace concepts {

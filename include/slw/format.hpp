@@ -3,7 +3,7 @@
 
 #include <slw/ranges.hpp>
 
-#include <slw/containers/string.hpp>
+#include <slw/strings.hpp>
 
 #include <format>
 #include <string>

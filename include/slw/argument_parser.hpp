@@ -1,9 +1,10 @@
 #ifndef SLW_ARGUMENT_PARSER_HPP
 #define SLW_ARGUMENT_PARSER_HPP
 
-#include <slw/strings.hpp>
-#include <slw/io/console.hpp>
+#include <slw/console.hpp>
 #include <slw/exceptions.hpp>
+#include <slw/list.hpp>
+#include <slw/strings.hpp>
 
 #include <functional>
 

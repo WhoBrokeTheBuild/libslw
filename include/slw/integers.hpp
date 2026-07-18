@@ -42,9 +42,11 @@ using std::is_signed_v;
 using std::is_unsigned_v;
 
 
+namespace integers {
+
 template <typename T = int>
     requires is_integral_v<T>
-constexpr inline T to_integer(string_view str, int base = 10)
+constexpr inline T parse(string_view str, int base = 10)
 {
     T value = {};
     const auto& [ptr, ec] = std::from_chars(str.begin(), str.end(), value, base);
@@ -53,6 +55,8 @@ constexpr inline T to_integer(string_view str, int base = 10)
     }
     throw system_error(make_error_code(ec));
 }
+
+} // namespace integers
 
 
 namespace concepts {
