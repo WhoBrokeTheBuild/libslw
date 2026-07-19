@@ -91,26 +91,30 @@ file(GLOB
     "tests/*.cpp"
 )
 
-foreach(_test_source IN LISTS _test_source_list)
+if (LIBSLW_TEST OR BUILD_TESTING)
 
-    cmake_path(GET _test_source STEM _test_name)
+    foreach(_test_source IN LISTS _test_source_list)
 
-    add_executable(
-        ${_test_name}
-        ${_test_source}
-    )
+        cmake_path(GET _test_source STEM _test_name)
 
-    target_link_libraries(
-        ${_test_name}
-        PRIVATE
-            libslw
-            GTest::gtest
-    )
-    
-    add_test(
-        NAME ${_test_name}
-        COMMAND ${_test_name}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests
-    )
+        add_executable(
+            ${_test_name}
+            ${_test_source}
+        )
 
-endforeach()
+        target_link_libraries(
+            ${_test_name}
+            PRIVATE
+                libslw
+                GTest::gtest
+        )
+        
+        add_test(
+            NAME ${_test_name}
+            COMMAND ${_test_name}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests
+        )
+
+    endforeach()
+
+endif()
