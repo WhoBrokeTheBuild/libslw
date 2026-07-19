@@ -3,9 +3,9 @@
 
 #include <slw/directory.hpp>
 #include <slw/list.hpp>
-#include <slw/paths.hpp>
-#include <slw/ranges.hpp>
-#include <slw/strings.hpp>
+#include <slw/path.hpp>
+#include <slw/range.hpp>
+#include <slw/string.hpp>
 
 #include <cstdio>
 #include <print>

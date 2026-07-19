@@ -1,5 +1,5 @@
-#ifndef SLW_RANGES_HPP
-#define SLW_RANGES_HPP
+#ifndef SLW_RANGE_HPP
+#define SLW_RANGE_HPP
 
 #include <ranges>
 #include <algorithm>
@@ -9,6 +9,20 @@ namespace slw {
 namespace ranges {
 
     using namespace std::ranges;
+
+    #ifndef __cpp_lib_ranges_generate_random
+
+        template <typename R, typename G>
+            requires output_range<R, std::invoke_result_t<G&>> &&
+            std::uniform_random_bit_generator<std::remove_cvref<G>>
+        constexpr borrowed_iterator_t<R> generate_random(R&& r, G&& g)
+        {
+            for (auto& e : r) {
+                e = g();
+            }
+        }
+
+    #endif // __cpp_lib_ranges_generate_random
 
 } // namespace ranges
 
@@ -68,10 +82,10 @@ namespace views {
             return _enumerator<Iterable>(std::forward<Iterable>(iterable));
         }
 
-    #endif
+    #endif // __cpp_lib_ranges_enumerate
 
 } // namespace views
 
 } // namespace slw
 
-#endif // SLW_RANGES_HPP
+#endif // SLW_RANGE_HPP

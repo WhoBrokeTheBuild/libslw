@@ -3,10 +3,10 @@
 
 #include <slw/chrono.hpp>
 #include <slw/environment.hpp>
-#include <slw/exceptions.hpp>
+#include <slw/exception.hpp>
 #include <slw/list.hpp>
 #include <slw/optional.hpp>
-#include <slw/strings.hpp>
+#include <slw/string.hpp>
 #include <slw/tuple.hpp>
 
 #include <fcntl.h>

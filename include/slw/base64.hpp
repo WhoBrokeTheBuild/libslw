@@ -1,10 +1,10 @@
 #ifndef SLW_BASE64_HPP
 #define SLW_BASE64_HPP
 
-#include <slw/exceptions.hpp>
-#include <slw/integers.hpp>
+#include <slw/exception.hpp>
+#include <slw/integer.hpp>
 #include <slw/list.hpp>
-#include <slw/strings.hpp>
+#include <slw/string.hpp>
 
 namespace slw {
 

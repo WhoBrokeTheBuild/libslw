@@ -2,9 +2,9 @@
 #define SLW_JSON_HPP
 
 #include <slw/dict.hpp>
-#include <slw/integers.hpp>
+#include <slw/integer.hpp>
 #include <slw/list.hpp>
-#include <slw/strings.hpp>
+#include <slw/string.hpp>
 #include <slw/unicode.hpp>
 
 #include <slw/ext/nlohmann/json.hpp>

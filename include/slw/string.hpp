@@ -1,10 +1,10 @@
-#ifndef SLW_STRINGS_HPP
-#define SLW_STRINGS_HPP
+#ifndef SLW_STRING_HPP
+#define SLW_STRING_HPP
 
-#include <slw/constraints.hpp>
+#include <slw/constraint.hpp>
 #include <slw/initializer_list.hpp>
 #include <slw/list.hpp>
-#include <slw/ranges.hpp>
+#include <slw/range.hpp>
 
 #include <string>
 #include <type_traits>
@@ -227,4 +227,4 @@ static_assert(not is_cstring_v<std::string_view>);
 
 } // namespace slw
 
-#endif // SLW_STRINGS_HPP
+#endif // SLW_STRING_HPP

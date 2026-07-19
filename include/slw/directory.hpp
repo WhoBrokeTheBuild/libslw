@@ -1,7 +1,7 @@
 #ifndef SLW_DIRECTORY_HPP
 #define SLW_DIRECTORY_HPP
 
-#include <slw/paths.hpp>
+#include <slw/path.hpp>
 
 #include <filesystem>
 

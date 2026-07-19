@@ -2,9 +2,9 @@
 #define SLW_ARGUMENT_PARSER_HPP
 
 #include <slw/console.hpp>
-#include <slw/exceptions.hpp>
+#include <slw/exception.hpp>
 #include <slw/list.hpp>
-#include <slw/strings.hpp>
+#include <slw/string.hpp>
 
 #include <functional>
 

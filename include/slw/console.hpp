@@ -1,7 +1,7 @@
 #ifndef SLW_CONSOLE_HPP
 #define SLW_CONSOLE_HPP
 
-#include <slw/strings.hpp>
+#include <slw/string.hpp>
 
 #include <print>
 

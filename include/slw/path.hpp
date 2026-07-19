@@ -1,8 +1,8 @@
-#ifndef SLW_PATHS_HPP
-#define SLW_PATHS_HPP
+#ifndef SLW_PATH_HPP
+#define SLW_PATH_HPP
 
-#include <slw/strings.hpp>
-#include <slw/exceptions.hpp>
+#include <slw/exception.hpp>
+#include <slw/string.hpp>
 
 #include <filesystem>
 
@@ -44,4 +44,4 @@ namespace paths {
 
 } // namespace slw
 
-#endif // SLW_PATHS_HPP
+#endif // SLW_PATH_HPP

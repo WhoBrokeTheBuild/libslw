@@ -1,8 +1,8 @@
-#ifndef SLW_FLOATS_HPP
-#define SLW_FLOATS_HPP
+#ifndef SLW_FLOAT_HPP
+#define SLW_FLOAT_HPP
 
-#include <slw/exceptions.hpp>
-#include <slw/strings.hpp>
+#include <slw/exception.hpp>
+#include <slw/string.hpp>
 
 #include <charconv>
 #include <limits>
@@ -55,4 +55,4 @@ static_assert(sizeof(float128) == 16);
 
 } // namespace slw
 
-#endif // SLW_FLOATS_HPP
+#endif // SLW_FLOAT_HPP

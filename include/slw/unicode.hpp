@@ -1,8 +1,8 @@
 #ifndef SLW_UNICODE_HPP
 #define SLW_UNICODE_HPP
 
-#include <slw/strings.hpp>
-#include <slw/exceptions.hpp>
+#include <slw/exception.hpp>
+#include <slw/string.hpp>
 
 namespace slw {
 

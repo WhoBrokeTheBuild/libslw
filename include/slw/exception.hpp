@@ -1,9 +1,9 @@
-#ifndef SLW_EXCEPTIONS_HPP
-#define SLW_EXCEPTIONS_HPP
-
-#include <system_error>
+#ifndef SLW_EXCEPTION_HPP
+#define SLW_EXCEPTION_HPP
 
 #include <cerrno>
+#include <stdexcept>
+#include <system_error>
 
 namespace slw {
 
@@ -29,4 +29,4 @@ inline std::system_error last_system_error(const char * what) {
 
 } // namespace slw
 
-#endif // SLW_EXCEPTIONS_HPP
+#endif // SLW_EXCEPTION_HPP

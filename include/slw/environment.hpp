@@ -1,9 +1,10 @@
 #ifndef SLW_ENVIRONMENT_HPP
 #define SLW_ENVIRONMENT_HPP
 
-#include <slw/strings.hpp>
-#include <slw/exceptions.hpp>
 #include <slw/dict.hpp>
+#include <slw/exception.hpp>
+#include <slw/list.hpp>
+#include <slw/string.hpp>
 
 #include <unistd.h>
 

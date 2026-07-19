@@ -1,5 +1,5 @@
-#ifndef SLW_CONSTRAINTS_HPP
-#define SLW_CONSTRAINTS_HPP
+#ifndef SLW_CONSTRAINT_HPP
+#define SLW_CONSTRAINT_HPP
 
 #include <type_traits>
 #include <concepts>
@@ -47,4 +47,4 @@ namespace concepts {
 
 } // namespace slw
 
-#endif // SLW_CONSTRAINTS_HPP
+#endif // SLW_CONSTRAINT_HPP

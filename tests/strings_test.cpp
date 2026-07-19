@@ -1,7 +1,7 @@
 
-#include <slw/strings.hpp>
+#include <slw/string.hpp>
 #include <slw/list.hpp>
-#include <slw/ranges.hpp>
+#include <slw/range.hpp>
 
 #include <gtest/gtest.h>
 

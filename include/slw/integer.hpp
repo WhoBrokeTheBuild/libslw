@@ -1,8 +1,8 @@
-#ifndef SLW_INTEGERS_HPP
-#define SLW_INTEGERS_HPP
+#ifndef SLW_INTEGER_HPP
+#define SLW_INTEGER_HPP
 
-#include <slw/strings.hpp>
-#include <slw/exceptions.hpp>
+#include <slw/exception.hpp>
+#include <slw/string.hpp>
 
 #include <charconv>
 #include <limits>
@@ -72,4 +72,4 @@ namespace concepts {
 
 } // namespace slw
 
-#endif // SLW_INTEGERS_HPP
+#endif // SLW_INTEGER_HPP

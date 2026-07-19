@@ -1,7 +1,7 @@
 #ifndef SLW_VIEW_HPP
 #define SLW_VIEW_HPP
 
-#include <slw/ranges.hpp>
+#include <slw/range.hpp>
 
 #include <span>
 

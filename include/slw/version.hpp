@@ -2,8 +2,8 @@
 #define SLW_VERSION_HPP
 
 #include <slw/format.hpp>
-#include <slw/integers.hpp>
-#include <slw/strings.hpp>
+#include <slw/integer.hpp>
+#include <slw/string.hpp>
 #include <slw/tuple.hpp>
 
 namespace slw {

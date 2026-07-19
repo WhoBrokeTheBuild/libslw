@@ -1,9 +1,8 @@
 #ifndef SLW_FORMAT_HPP
 #define SLW_FORMAT_HPP
 
-#include <slw/ranges.hpp>
-
-#include <slw/strings.hpp>
+#include <slw/range.hpp>
+#include <slw/string.hpp>
 
 #include <format>
 #include <string>

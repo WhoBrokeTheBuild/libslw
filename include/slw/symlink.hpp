@@ -1,7 +1,7 @@
 #ifndef SLW_SYMLINK_HPP
 #define SLW_SYMLINK_HPP
 
-#include <slw/paths.hpp>
+#include <slw/path.hpp>
 
 #include <filesystem>
 
