@@ -2,7 +2,17 @@ cmake_minimum_required(VERSION 4.0)
 
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
-project(SLW)
+project(libslw)
+
+###
+### Options
+###
+
+option(
+    LIBSLW_TEST
+    "Build libslw test suite"
+    ON
+)
 
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -29,7 +39,7 @@ FetchContent_Declare(
 list(APPEND _fetch_content_list nlohmann_json)
 
 include(CTest)
-if(BUILD_TESTING)
+if(LIBSLW_TEST OR BUILD_TESTING)
 
     set(INSTALL_GTEST OFF)
     FetchContent_Declare(
@@ -104,14 +114,3 @@ foreach(_test_source IN LISTS _test_source_list)
     )
 
 endforeach()
-
-# Variant? Queue? Linked List? Stack?
-# JSON
-# INI / TOML
-# Chrono
-# Logging
-# Algorithm?
-# Threading? Future
-# Exceptions?
-# Random
-
