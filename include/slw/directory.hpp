@@ -1,6 +1,7 @@
 #ifndef SLW_DIRECTORY_HPP
 #define SLW_DIRECTORY_HPP
 
+#include <slw/format.hpp>
 #include <slw/path.hpp>
 
 #include <filesystem>
@@ -45,9 +46,9 @@ namespace directory {
         }
     }
 
-    static inline path create_temporary(std::string_view prefix = "", const path& directory = temp())
+    static inline path create_temporary(string_view prefix = "", const path& directory = temp())
     {
-        slw::path directory_template = directory / std::format("{}{}", prefix, "XXXXXX");
+        slw::path directory_template = directory / format("{}{}", prefix, "XXXXXX");
         const char * result = ::mkdtemp(const_cast<char *>(directory_template.c_str()));
         if (!result) {
             throw last_system_error();

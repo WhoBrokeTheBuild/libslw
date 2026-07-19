@@ -1,8 +1,6 @@
 #ifndef SLW_SET_HPP
 #define SLW_SET_HPP
 
-#include <slw/format.hpp>
-
 #include <set>
 #include <unordered_set>
 

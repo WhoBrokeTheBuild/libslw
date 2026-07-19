@@ -6,6 +6,8 @@
 #include <slw/list.hpp>
 #include <slw/string.hpp>
 
+#include <cmath>
+
 namespace slw {
 
 namespace base64 {

@@ -1,8 +1,6 @@
 #ifndef SLW_DICT_HPP
 #define SLW_DICT_HPP
 
-#include <slw/format.hpp>
-
 #include <map>
 #include <type_traits>
 #include <unordered_map>

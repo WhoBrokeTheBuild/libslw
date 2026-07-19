@@ -1,8 +1,6 @@
 #ifndef SLW_ARRAY_HPP
 #define SLW_ARRAY_HPP
 
-#include <slw/format.hpp>
-
 #include <array>
 
 namespace slw {

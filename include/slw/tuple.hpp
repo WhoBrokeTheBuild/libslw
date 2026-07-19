@@ -35,7 +35,7 @@ namespace slw {
 
 template <typename ...Args>
 inline string to_string(const slw::tuple<Args...>& array) {
-    return std::format("{}", array);
+    return format("{}", array);
 }
 
 } // namespace slw

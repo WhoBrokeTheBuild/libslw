@@ -1,5 +1,6 @@
 
 #include <slw/file.hpp>
+#include <slw/format.hpp>
 
 #include <gtest/gtest.h>
 

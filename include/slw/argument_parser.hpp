@@ -3,6 +3,7 @@
 
 #include <slw/console.hpp>
 #include <slw/exception.hpp>
+#include <slw/format.hpp>
 #include <slw/list.hpp>
 #include <slw/string.hpp>
 
